@@ -7,11 +7,12 @@ import Reminder from "../modules/reminder/Reminder";
 import Interaction from "../modules/interaction/Interaction";
 import Login from "../modules/login/Login";
 import Register from "../modules/register/Register";
+import ProtectedRoute from "../layout/ProtectedRoute";
 
 const routes: RouteObject[] = [
   {
     path: "/",
-    element: <RootLayout />,
+    element: <ProtectedRoute><RootLayout /></ProtectedRoute>,
     children: [
       { index: true, element: <Dashboard /> },
       { path: "/projects", element: <Project /> },

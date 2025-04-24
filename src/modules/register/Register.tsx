@@ -32,7 +32,7 @@ const Register = () => {
     }
   }, [data, isPending, isSuccess, navigate]);
   return (
-    <div className="w-screen min-h-screen bg-[#F8F8F8] flex items-center justify-center">
+    <div className="w-screen h-screen bg-[#F8F8F8] flex items-center justify-center overflow-x-hidden overflow-y-auto">
       <div className="shrink-0 min-w-96 min-h-80 bg-white rounded-lg p-10 space-y-5">
         <h2 className="text-xl font-bold text-center">Create Account</h2>
         <Form
