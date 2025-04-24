@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { CircleSlash } from "lucide-react";
 import { TFormElementProps } from "../../types/form.types";
@@ -21,13 +21,10 @@ const FormInput = ({
 }: FormInputProps) => {
   const {
     control,
-    trigger,
     clearErrors,
     watch,
     formState: { errors },
   } = useFormContext();
-
-  const [isFocused, setIsFocused] = useState(false);
   const value = watch(name);
   const error = errors[name];
 
@@ -52,6 +49,8 @@ const FormInput = ({
         render={({ field }) => (
           <input
             {...field}
+            value={field.value ?? ""}
+            onChange={(e) => field.onChange(e.currentTarget.value)}
             id={name}
             type={type}
             placeholder={placeholder}
@@ -60,24 +59,13 @@ const FormInput = ({
             required={required}
             hidden={hidden}
             autoComplete="off"
-            onFocus={() => setIsFocused(true)}
-            onBlur={async () => {
-              field.onBlur();
-              setIsFocused(false);
-              await trigger(name);
-            }}
-            onChange={async (e) => {
-              field.onChange(e);
-              if (!e.target.value) await trigger(name);
-            }}
             className={[
-              "block w-full rounded-lg border px-4 py-2 outline-none transition focus:ring-2 focus:ring-offset-1",
-              disabled && "bg-gray-100 cursor-not-allowed",
+              "block w-full rounded-lg border px-4 py-2 outline-none transition focus:ring-2 focus:ring-offset-1 focus:border-purple-500 focus:ring-purple-500",
+              disabled &&
+                "bg-gray-100 cursor-not-allowed focus:border-gray-200 focus:ring-0",
               error?.message
                 ? "border-red-500 focus:border-red-500 focus:ring-red-500 "
-                : value && !isFocused
-                ? "border-purple-500 focus:border-purple-500"
-                : "border-gray-300 focus:border-purple-500 focus:ring-purple-500",
+                : "",
             ].join(" ")}
           />
         )}

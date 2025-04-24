@@ -5,6 +5,8 @@ import Project from "../modules/project/Project";
 import Client from "../modules/client/Client";
 import Reminder from "../modules/reminder/Reminder";
 import Interaction from "../modules/interaction/Interaction";
+import Login from "../modules/login/Login";
+import Register from "../modules/register/Register";
 
 const routes: RouteObject[] = [
   {
@@ -17,6 +19,14 @@ const routes: RouteObject[] = [
       { path: "/reminders", element: <Reminder /> },
       { path: "/interactions", element: <Interaction /> },
     ],
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
   },
 ];
 
