@@ -9,6 +9,7 @@ import Register from "../modules/register/Register";
 import ProtectedRoute from "../layout/ProtectedRoute";
 import Projects from "../modules/project/Projects";
 import ProjectForm from "../modules/project/ProjectForm";
+import NotFound from "../modules/404/NotFound";
 
 const routes: RouteObject[] = [
   {
@@ -18,7 +19,7 @@ const routes: RouteObject[] = [
         <RootLayout />
       </ProtectedRoute>
     ),
-    errorElement: <div>Error</div>,
+    errorElement: <NotFound />,
     children: [
       { index: true, element: <Dashboard /> },
       { path: "/projects", element: <Projects /> },
