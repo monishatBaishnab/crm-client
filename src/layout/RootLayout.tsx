@@ -12,11 +12,13 @@ const RootLayout = () => {
       <Sidebar isSmall={isSmall} />
 
       {/* –– Main content –– */}
-      <main className="h-screen w-full grow overflow-y-auto bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+      <main className="h-screen w-full grow overflow-y-auto bg-gray-50 dark:bg-gray-900 transition-colors duration-300 overflow-hidden">
         <Navbar toggle={() => setIsSmall(!isSmall)} />
 
-        {/* –– Routed pages –– */}
-        <Outlet />
+        <div className="h-[calc(100vh_-_56px)] overflow-y-auto">
+          {/* –– Routed pages –– */}
+          <Outlet />
+        </div>
       </main>
     </div>
   );

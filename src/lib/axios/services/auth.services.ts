@@ -22,8 +22,20 @@ const login = async (payload: LoginPayload) => {
   }
 };
 
+// Fetch all clients with optional query parameters
+const fetchStates = async () => {
+  try {
+    const response = await api.get("auth/states");
+    return response.data;
+  } catch (err: unknown) {
+    if (err instanceof Error) throw err;
+    throw new Error(String(err));
+  }
+};
+
 // Object to encapsulate product-related services
 export const authServices = {
   login,
   register,
+  fetchStates,
 };
