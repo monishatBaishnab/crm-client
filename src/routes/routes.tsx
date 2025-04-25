@@ -6,10 +6,9 @@ import Interaction from "../modules/interaction/Interaction";
 import Login from "../modules/login/Login";
 import Register from "../modules/register/Register";
 import ProtectedRoute from "../layout/ProtectedRoute";
-import Projects from "../modules/project/Projects";
-import ProjectForm from "../modules/project/ProjectForm";
 import NotFound from "../modules/404/NotFound";
 import { Clients, CreateClient, UpdateClient } from "../modules/client";
+import { CreateProject, Projects, UpdateProject } from "../modules/project";
 
 const routes: RouteObject[] = [
   {
@@ -23,7 +22,8 @@ const routes: RouteObject[] = [
     children: [
       { index: true, element: <Dashboard /> },
       { path: "/projects", element: <Projects /> },
-      { path: "/projects/create", element: <ProjectForm /> },
+      { path: "/projects/create", element: <CreateProject /> },
+      { path: "/projects/update/:id", element: <UpdateProject /> },
       { path: "/clients", element: <Clients /> },
       { path: "/clients/create", element: <CreateClient /> },
       { path: "/clients/update/:id", element: <UpdateClient /> },

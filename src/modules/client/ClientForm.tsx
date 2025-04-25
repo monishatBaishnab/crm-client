@@ -42,6 +42,7 @@ const ClientForm = () => {
     queryKey: ["clients", id],
     queryFn: () => fetchClientById(id as string),
     enabled: !!id,
+    refetchOnWindowFocus: false,
   });
   const client = data?.data || {};
 

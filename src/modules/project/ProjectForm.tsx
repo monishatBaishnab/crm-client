@@ -1,29 +1,40 @@
 import { Loader, Save, X } from "lucide-react";
 import Button from "../../components/ui/Button";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { FieldValues } from "react-hook-form";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 import FormInput from "../../components/form/FormInput";
 import Form from "../../components/form/Form";
-import FormTextarea from "../../components/form/FormTextarea";
-import FormSelect from "../../components/form/FormSelect";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { create_project_schema } from "../../schemas/project.schema";
-import { projectServices } from "../../lib/axios/services/project.services";
+import { create_project_schema } from "./resources/project.schemas";
+import useAuth from "../../hooks/useAuth";
 import {
-  TProject,
+  createProject,
+  fetchProjectById,
+  STATUS_OPTIONS,
   TProjectFormData,
   TProjectPayload,
-} from "../../types/project.types";
+  updateProject,
+} from "./resources";
+import ProjectFormSkeleton from "./components/ProjectFormSkeleton";
+import ProjectFormPreview from "./components/ProjectFormPreview";
+import FormSelect from "../../components/form/FormSelect";
+import FormTextarea from "../../components/form/FormTextarea";
+import { TClient, useClients } from "../client";
 
-type ProjectFormProps = {
-  project?: TProject;
-};
-
-const ProjectForm = ({ project }: ProjectFormProps) => {
+const ProjectForm = () => {
+  const { id } = useParams();
+  const isUpdating = !!id;
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const { data: clients } = useClients([]);
+  const clientOptions = clients?.map((client: TClient) => ({
+    label: client.name,
+    value: client.id,
+  }));
 
   const {
     mutate: mutateProject,
@@ -33,32 +44,37 @@ const ProjectForm = ({ project }: ProjectFormProps) => {
     error,
   } = useMutation({
     mutationFn: (payload: TProjectPayload) => {
-      return project
-        ? projectServices.updateProject(project.id, payload)
-        : projectServices.createProject(payload);
+      return isUpdating ? updateProject(id, payload) : createProject(payload);
     },
   });
 
+  const { data, isLoading, isFetching } = useQuery({
+    queryKey: ["projects", id],
+    queryFn: () => fetchProjectById(id as string),
+    enabled: !!id,
+    refetchOnWindowFocus: false,
+  });
+
+  const project = data?.data || {};
+
   const handleSubmit = async (formData: FieldValues) => {
+    if (!user) return;
+
     const payload: TProjectPayload = {
-      client_id:
-        formData.client_id ||
-        project?.client_id ||
-        "eff5505d-755f-460d-a0e8-93b990e48bb3",
+      client_id: formData.client_id,
       title: formData.title,
-      budget: parseFloat(formData.budget),
+      budget: formData.budget,
       deadline: formData.deadline,
       status: formData.status,
       description: formData.description,
     };
-
     mutateProject(payload);
   };
 
   useEffect(() => {
     if (isSuccess) {
       toast.success(
-        project
+        isUpdating
           ? "Project updated successfully!"
           : "Project created successfully!",
       );
@@ -67,78 +83,106 @@ const ProjectForm = ({ project }: ProjectFormProps) => {
     if (isError && error instanceof Error) {
       toast.error(error.message);
     }
-  }, [isSuccess, isError, error, navigate, project]);
+  }, [isSuccess, isError, error, navigate, isUpdating]);
 
   const defaultValues: TProjectFormData = {
+    client_id: project?.client_id ?? "",
     title: project?.title ?? "",
     budget: project?.budget ?? "",
     deadline: (project?.deadline?.slice(0, 10) ?? "") as unknown as Date,
     status: project?.status ?? "",
     description: project?.description ?? "",
-    client_id: project?.client_id || "",
   };
 
   return (
-    <div className="bg-white rounded-lg p-5 space-y-5 m-5">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold">
-          {project ? "Update" : "Create"} Project
-        </h2>
-        <Button variant="secondary" className="size-10 !p-2">
-          <X className="size-5" />
-        </Button>
-      </div>
+    <div className="p-5 dark:bg-gray-900">
       <Form
         resolver={zodResolver(create_project_schema)}
         onSubmit={handleSubmit}
-        defaultValues={project ? defaultValues : ({} as TProjectFormData)}
+        defaultValues={isUpdating ? defaultValues : ({} as TProjectFormData)}
       >
-        <div className="space-y-3">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="md:col-span-2">
-              <FormInput
-                name="title"
-                type="text"
-                label="Project Title"
-                placeholder="Enter project title"
-              />
+        <div className="flex flex-col lg:flex-row gap-6 w-full">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md flex-1">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-gray-800 dark:text-gray-300">
+                {isUpdating ? "Update" : "Create"} Project
+              </h2>
+              <Button
+                type="button"
+                onClick={() => navigate("/projects")}
+                variant="secondary"
+                className="size-10 !p-2"
+              >
+                <X className="size-5" />
+              </Button>
             </div>
-            <FormInput name="client_id" label="Client" />
-            <FormInput
-              name="budget"
-              type="number"
-              label="Budget"
-              placeholder="Enter budget (e.g. 125000.00)"
-            />
-            <FormInput name="deadline" type="date" label="Deadline" />
-            <FormSelect
-              name="status"
-              options={[
-                { label: "In Progress", value: "IN_PROGRESS" },
-                { label: "On Hold", value: "ON_HOLD" },
-                { label: "Completed", value: "COMPLETED" },
-                { label: "Canceled", value: "CANCELED" },
-              ]}
-              label="Status"
-              placeholder="e.g. IN_PROGRESS"
-            />
+
+            {isLoading || isFetching ? (
+              <ProjectFormSkeleton />
+            ) : (
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 gap-4">
+                  <FormSelect
+                    name="client_id"
+                    options={clientOptions?.length ? clientOptions : []}
+                    label="Client ID"
+                    placeholder="Enter client ID"
+                  />
+                  <FormInput
+                    name="title"
+                    type="text"
+                    label="Project Title"
+                    placeholder="Enter project title"
+                  />
+                  <FormInput
+                    name="budget"
+                    type="number"
+                    label="Budget"
+                    placeholder="Enter project budget"
+                  />
+                  <FormInput
+                    name="deadline"
+                    type="date"
+                    label="Deadline"
+                    placeholder="Select deadline"
+                  />
+                  <FormSelect
+                    name="status"
+                    options={STATUS_OPTIONS}
+                    label="Status"
+                    placeholder="Enter project status"
+                  />
+                  <FormTextarea
+                    name="description"
+                    label="Description"
+                    placeholder="Project description"
+                  />
+                </div>
+                <div className="flex justify-end gap-3 pt-4">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => navigate("/projects")}
+                    disabled={isPending}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={isPending} className="gap-2">
+                    {isPending ? (
+                      <Loader className="size-5 animate-spin" />
+                    ) : (
+                      <Save className="size-5" />
+                    )}
+                    {isUpdating ? "Update" : "Create"} Project
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
-          <FormTextarea
-            name="description"
-            label="Description"
-            placeholder="Project description"
-          />
-          <div className="flex justify-end gap-3">
-            <Button disabled={isPending}>
-              <Save className="size-5" />
-              {isPending ? (
-                <Loader className="h-5 w-5 animate-spin" aria-hidden="true" />
-              ) : project ? (
-                "Update"
-              ) : (
-                "Create"
-              )}
-            </Button>
+
+          {/* Optional Preview Section */}
+          <div>
+            <ProjectFormPreview isLoading={isLoading || isFetching} />
           </div>
         </div>
       </Form>

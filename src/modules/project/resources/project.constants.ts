@@ -24,6 +24,10 @@ export const PROJECT_COLUMNS = [
     label: "Created",
     key: "created_at",
   },
+  {
+    label: "Action",
+    key: "action",
+  },
 ];
 
 export const STATUS_OPTIONS = [
