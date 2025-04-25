@@ -10,8 +10,8 @@ import { Link, NavLink } from "react-router";
 
 const SIDEBAR_ITEMS = [
   { label: "Dashboard", to: "/", icon: Gauge },
-  { label: "Projects", to: "/projects", icon: FolderKanban },
   { label: "Clients", to: "/clients", icon: Users2 },
+  { label: "Projects", to: "/projects", icon: FolderKanban },
   { label: "Reminders", to: "/reminders", icon: Bell },
   { label: "Interactions", to: "/interactions", icon: MessageSquare },
 ] as const;

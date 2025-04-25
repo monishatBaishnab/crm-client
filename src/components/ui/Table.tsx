@@ -1,43 +1,30 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
-import { useState } from "react";
-import sortItems from "../../utils/sortItems";
+import { AlertCircle } from "lucide-react";
+import { ReactNode } from "react";
 
 type TableProps<T> = {
   columns: { label: string; key: string }[];
   data: T[];
   isLoading?: boolean;
+  path?: string;
+  renderActions?: (row: T) => ReactNode;
 };
 
 const Table = <T,>({
   columns,
   data,
   isLoading = false,
+  renderActions,
 }: TableProps<T>) => {
-  const [sortCfg, setSortCfg] = useState<{ key: string; order: "asc" | "desc" } | null>(
-    null,
-  );
-
-  const toggleSort = (key: string) =>
-    setSortCfg((prev) =>
-      prev?.key === key
-        ? { key, order: prev.order === "asc" ? "desc" : "asc" }
-        : { key, order: "asc" },
-    );
-
-  const sorted = sortCfg ? sortItems(sortCfg, data as Record<string, unknown>[]) : data;
-
-  const renderSortIcon = (key: string) => {
-    if (!sortCfg || sortCfg.key !== key) return <ArrowUpDown className="size-4" />;
-    return sortCfg.order === "asc" ? <ArrowUp className="size-4" /> : <ArrowDown className="size-4" />;
-  };
-
   const renderBody = () => {
     if (isLoading) {
-      return Array.from({ length: 4 }).map((_, r) => (
+      return Array.from({ length: 5 }).map((_, r) => (
         <tr key={r} className="animate-pulse">
           {columns.map((c) => (
-            <td key={c.key} className="px-4 py-2 border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-700">
+            <td
+              key={c.key}
+              className="px-4 py-2 border border-gray-200 dark:border-gray-800 bg-gray-100 dark:bg-gray-700"
+            >
               <div className="h-5 w-full rounded bg-gray-200 dark:bg-gray-600" />
             </td>
           ))}
@@ -45,21 +32,34 @@ const Table = <T,>({
       ));
     }
 
-    if (sorted.length === 0) {
+    if (data.length === 0) {
       return (
         <tr>
-          <td colSpan={columns.length} className="text-center px-4 py-2 border border-gray-200 dark:border-gray-700 dark:bg-gray-700">
-            No data found
+          <td
+            colSpan={columns.length}
+            className="text-center px-4 py-16 border border-gray-200 dark:border-gray-800 dark:bg-gray-700"
+          >
+            <div className="flex flex-col items-center justify-center gap-2 text-gray-500 dark:text-gray-300">
+              <AlertCircle />
+              <span className="text-base font-medium">No data found</span>
+            </div>
           </td>
         </tr>
       );
     }
 
-    return sorted.map((row: any, i) => (
+    return data.map((row: any, i) => (
       <tr key={i} className="hover:bg-gray-100 dark:hover:bg-gray-600">
         {columns.map((c) => (
-          <td key={c.key} className="px-4 py-2 text-sm border border-gray-200 dark:border-gray-700 whitespace-nowrap dark:bg-gray-700 dark:text-gray-300">
-            {row[c.key] as React.ReactNode}
+          <td
+            key={c.key}
+            className="px-4 py-2 text-sm border border-gray-200 dark:border-gray-800 whitespace-nowrap dark:bg-gray-700 dark:text-gray-300"
+          >
+            {c.key === "action"
+              ? renderActions
+                ? renderActions(row)
+                : ""
+              : row[c.key]}
           </td>
         ))}
       </tr>
@@ -76,19 +76,17 @@ const Table = <T,>({
               {columns.map(({ label, key }) => (
                 <th
                   key={key}
-                  onClick={() => toggleSort(key)}
-                  className="border border-gray-200 cursor-pointer dark:border-gray-700"
+                  className="border border-gray-200 dark:border-gray-700 py-2"
                 >
-                  <div className="flex items-center justify-between px-4 py-2 text-sm">
-                    <span className="whitespace-nowrap">{label}</span>
-                    {renderSortIcon(key)}
-                  </div>
+                  <span className="whitespace-nowrap">{label}</span>
                 </th>
               ))}
             </tr>
           </thead>
 
-          <tbody className="text-gray-600 dark:text-gray-300">{renderBody()}</tbody>
+          <tbody className="text-gray-600 dark:text-gray-300">
+            {renderBody()}
+          </tbody>
         </table>
       </div>
     </section>

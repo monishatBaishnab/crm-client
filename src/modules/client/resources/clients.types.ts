@@ -9,9 +9,11 @@ export type TClient = {
   email: string;
   phone: string;
   company: string;
+  is_deleted: boolean;
   created_at: string;
   updated_at: string;
 };
+
 
 // Payload type for creating or updating a client
 export type TClientPayload = {

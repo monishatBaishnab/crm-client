@@ -41,9 +41,12 @@ export const createClient = async (data: TClientPayload) => {
 };
 
 // Update an existing client by user_id
-export const updateClient = async (id: string, data: Partial<TClientPayload>) => {
+export const updateClient = async (
+  id: string,
+  data: Partial<TClientPayload>,
+) => {
   try {
-    const response = await api.patch(`/clients/${id}`, data);
+    const response = await api.put(`/clients/${id}`, data);
     return response.data;
   } catch (err: unknown) {
     if (err instanceof Error) throw err;

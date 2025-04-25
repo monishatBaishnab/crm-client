@@ -1,6 +1,6 @@
 import { Loader, Save, X } from "lucide-react";
 import Button from "../../components/ui/Button";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { FieldValues } from "react-hook-form";
 import { useNavigate, useParams } from "react-router";
@@ -11,13 +11,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { create_client_schema } from "./resources/client.schemas";
 import useAuth from "../../hooks/useAuth";
 import ClientFormPreview from "./components/ClientFormPreview";
-import { createClient, TClient, TClientFormData, TClientPayload, updateClient } from "./resources";
+import {
+  createClient,
+  fetchClientById,
+  TClientFormData,
+  TClientPayload,
+  updateClient,
+} from "./resources";
+import ClientFormSkeleton from "./components/ClientFormSkeleton";
 
-type ClientFormProps = {
-  client?: TClient;
-};
-
-const ClientForm = ({ client }: ClientFormProps) => {
+const ClientForm = () => {
   const { id } = useParams();
   const isUpdating = !!id;
   const navigate = useNavigate();
@@ -31,11 +34,16 @@ const ClientForm = ({ client }: ClientFormProps) => {
     error,
   } = useMutation({
     mutationFn: (payload: TClientPayload) => {
-      return client
-        ? updateClient(client.user_id, payload)
-        : createClient(payload);
+      return isUpdating ? updateClient(id, payload) : createClient(payload);
     },
   });
+
+  const { data, isLoading, isFetching } = useQuery({
+    queryKey: ["clients", id],
+    queryFn: () => fetchClientById(id as string),
+    enabled: !!id,
+  });
+  const client = data?.data || {};
 
   const handleSubmit = async (formData: FieldValues) => {
     if (!user) return;
@@ -47,7 +55,7 @@ const ClientForm = ({ client }: ClientFormProps) => {
       phone: formData.phone,
       company: formData.company,
     };
-
+    console.log(payload);
     mutateClient(payload);
   };
 
@@ -97,59 +105,63 @@ const ClientForm = ({ client }: ClientFormProps) => {
               </Button>
             </div>
 
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 gap-4">
-                <FormInput
-                  name="name"
-                  type="text"
-                  label="Client Name"
-                  placeholder="Enter client name"
-                />
-                <FormInput
-                  name="email"
-                  type="email"
-                  label="Email"
-                  placeholder="Enter client email"
-                />
-                <FormInput
-                  name="phone"
-                  type="text"
-                  label="Phone"
-                  placeholder="Enter client phone number"
-                />
-                <FormInput
-                  name="company"
-                  type="text"
-                  label="Company"
-                  placeholder="Enter company name"
-                />
+            {isLoading || isFetching ? (
+              <ClientFormSkeleton />
+            ) : (
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 gap-4">
+                  <FormInput
+                    name="name"
+                    type="text"
+                    label="Client Name"
+                    placeholder="Enter client name"
+                  />
+                  <FormInput
+                    name="email"
+                    type="email"
+                    label="Email"
+                    placeholder="Enter client email"
+                  />
+                  <FormInput
+                    name="phone"
+                    type="text"
+                    label="Phone"
+                    placeholder="Enter client phone number"
+                  />
+                  <FormInput
+                    name="company"
+                    type="text"
+                    label="Company"
+                    placeholder="Enter company name"
+                  />
+                </div>
+                <div className="flex justify-end gap-3 pt-4">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => navigate("/clients")}
+                    disabled={isPending}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={isPending} className="gap-2">
+                    {isPending ? (
+                      <Loader
+                        className="size-5 animate-spin"
+                        aria-hidden="true"
+                      />
+                    ) : (
+                      <Save className="size-5" />
+                    )}
+                    {isUpdating ? "Update" : "Create"} Client
+                  </Button>
+                </div>
               </div>
-              <div className="flex justify-end gap-3 pt-4">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => navigate("/clients")}
-                  disabled={isPending}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={isPending} className="gap-2">
-                  {isPending ? (
-                    <Loader
-                      className="size-5 animate-spin"
-                      aria-hidden="true"
-                    />
-                  ) : (
-                    <Save className="size-5" />
-                  )}
-                  {isUpdating ? "Update" : "Create"} Client
-                </Button>
-              </div>
-            </div>
+            )}
           </div>
 
           {/* Preview Card Section - Inside the Form to access context */}
-          <ClientFormPreview />
+          <ClientFormPreview isLoading={isLoading || isFetching} />
         </div>
       </Form>
     </div>
