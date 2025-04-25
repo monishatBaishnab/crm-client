@@ -11,14 +11,12 @@ const Dashboard = () => {
     refetchOnWindowFocus: false,
   });
 
-  console.log(data);
   return (
     <div className="p-5 space-y-5">
       <h2 className="text-xl font-bold">Overview</h2>
 
       {/* -- States -- */}
-      <DashboardStats stats={data?.data} isLoading={isLoading||isFetching} />
-
+      <DashboardStats stats={data?.data} isLoading={isLoading || isFetching} />
 
       {/* <ProductsTable /> */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">

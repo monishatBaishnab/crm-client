@@ -9,11 +9,11 @@ export type TClient = {
   email: string;
   phone: string;
   company: string;
+  notes: string;
   is_deleted: boolean;
   created_at: string;
   updated_at: string;
 };
-
 
 // Payload type for creating or updating a client
 export type TClientPayload = {
@@ -22,6 +22,7 @@ export type TClientPayload = {
   email: string;
   phone: string;
   company: string;
+  notes: string;
 };
 
 export type TClientFormData = z.infer<typeof create_client_schema>;

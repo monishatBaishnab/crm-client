@@ -19,6 +19,7 @@ import {
   updateClient,
 } from "./resources";
 import ClientFormSkeleton from "./components/ClientFormSkeleton";
+import FormTextarea from "../../components/form/FormTextarea";
 
 const ClientForm = () => {
   const { id } = useParams();
@@ -37,7 +38,6 @@ const ClientForm = () => {
       return isUpdating ? updateClient(id, payload) : createClient(payload);
     },
   });
-
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ["clients", id],
     queryFn: () => fetchClientById(id as string),
@@ -45,6 +45,7 @@ const ClientForm = () => {
     refetchOnWindowFocus: false,
   });
   const client = data?.data || {};
+  console.log(client);
 
   const handleSubmit = async (formData: FieldValues) => {
     if (!user) return;
@@ -55,8 +56,9 @@ const ClientForm = () => {
       email: formData.email,
       phone: formData.phone,
       company: formData.company,
+      notes: formData.notes,
     };
-    console.log(payload);
+    
     mutateClient(payload);
   };
 
@@ -79,6 +81,7 @@ const ClientForm = () => {
     email: client?.email ?? "",
     phone: client?.phone ?? "",
     company: client?.company ?? "",
+    notes: client?.notes ?? "",
   };
 
   return (
@@ -134,6 +137,11 @@ const ClientForm = () => {
                     type="text"
                     label="Company"
                     placeholder="Enter company name"
+                  />
+                  <FormTextarea
+                    name="notes"
+                    label="Notes"
+                    placeholder="Add any notes about the client"
                   />
                 </div>
                 <div className="flex justify-end gap-3 pt-4">
