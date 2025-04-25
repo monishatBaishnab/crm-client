@@ -1,15 +1,20 @@
 import { Menu, LogOut } from "lucide-react";
-import Cookies from "js-cookie";
 import { useNavigate } from "react-router";
 
 const Navbar = ({ toggle }: { toggle: () => void }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    Cookies.remove("token", { path: "/" });
+    // Clear localStorage
+    localStorage.removeItem("token");
+
+    // Clear cookie (just in case)
+    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+
+    // Redirect to login
     navigate("/login", { replace: true });
-    window.location.replace("/login");
   };
+
   return (
     <header className="w-full bg-white h-14 border-b border-b-gray-100 px-5 flex items-center justify-between">
       <div className="flex items-center gap-3">

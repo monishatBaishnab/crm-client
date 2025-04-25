@@ -6,7 +6,7 @@ export const PROJECT_COLUMNS = [
   },
   {
     label: "Client",
-    key: "clientName", // We'll map this manually
+    key: "clientName",
   },
   {
     label: "Budget",
@@ -14,7 +14,7 @@ export const PROJECT_COLUMNS = [
   },
   {
     label: "Deadline",
-    key: "deadline", // Format in table renderer
+    key: "deadline",
   },
   {
     label: "Status",
@@ -24,4 +24,12 @@ export const PROJECT_COLUMNS = [
     label: "Created",
     key: "created_at",
   },
+];
+
+export const STATUS_OPTIONS = [
+  { label: "All", value: "" },
+  { label: "In Progress", value: "IN_PROGRESS" },
+  { label: "On Hold", value: "ON_HOLD" },
+  { label: "Completed", value: "COMPLETED" },
+  { label: "Canceled", value: "CANCELED" },
 ];

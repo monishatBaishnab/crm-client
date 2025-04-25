@@ -25,9 +25,14 @@ const Login = () => {
 
   useEffect(() => {
     if (!isPending && isSuccess && data?.success) {
+      // Save token to localStorage (if it's in data.result.token or similar)
+      if (data?.data?.token) {
+        localStorage.setItem("token", data.data.token);
+      }
+
       toast.success("Login successful.");
       navigate("/");
-    } else if (isSuccess && !data.success) {
+    } else if (isSuccess && !data?.success) {
       toast.error(data?.message);
     }
   }, [data, isPending, isSuccess, navigate]);

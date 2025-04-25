@@ -1,15 +1,13 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import Cookies from "js-cookie";
+import { AxiosHeaders } from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:5000/api/v1",
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
 });
 
-import { AxiosHeaders } from "axios";
-
 api.interceptors.request.use((config) => {
-  const token = Cookies.get("token");
+  const token = localStorage.getItem("token");
   if (token) {
     config.headers = {
       ...(config.headers as AxiosHeaders).toJSON(),
