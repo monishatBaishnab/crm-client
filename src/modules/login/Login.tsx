@@ -3,7 +3,7 @@ import Form from "../../components/form/Form";
 import FormInput from "../../components/form/FormInput";
 import { Link, useNavigate } from "react-router";
 import { useMutation } from "@tanstack/react-query";
-import { authServices } from "../../services/auth.services";
+import { authServices } from "../../lib/axios/services/auth.services";
 import { LoginPayload } from "../../types/auth.types";
 import { useEffect } from "react";
 import { toast } from "sonner";

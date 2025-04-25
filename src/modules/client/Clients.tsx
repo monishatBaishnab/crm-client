@@ -1,15 +1,15 @@
 import { useMemo, useState } from "react";
 import Pagination from "../../components/ui/Pagination";
 import useDebounce from "../../hooks/useDebounce";
-import useProjects from "../../hooks/useProjects";
-import { TProject } from "../../types/project.types";
-import { PROJECT_COLUMNS, STATUS_OPTIONS } from "./project.constants";
 import Table from "../../components/ui/Table";
 import Button from "../../components/ui/Button";
 import { Plus } from "lucide-react";
 import { useNavigate } from "react-router";
+import { CLIENT_COLUMNS, STATUS_OPTIONS } from "./resources/client.constants";
+import { TClient } from "./resources";
+import { useClients } from "./hook";
 
-const Projects = () => {
+const Clients = () => {
   const navigate = useNavigate();
   const pageSize = 5;
 
@@ -49,30 +49,28 @@ const Projects = () => {
     return filters;
   }, [page, debouncedSearchTerm, debouncedStatus]);
 
-  const { data, meta, isLoading, isFetching } = useProjects(queryFilters);
+  const { data, meta, isLoading, isFetching } = useClients(queryFilters); // Use custom hook for fetching clients
 
-  const formattedProjects = data?.length
-    ? data?.map((project: TProject) => ({
-        ...project,
-        clientName: project.client?.name ?? "N/A",
-        budget: `$${Number(project.budget).toLocaleString()}`,
-        deadline: new Date(project.deadline).toLocaleDateString(),
-        created_at: new Date(project.created_at).toLocaleDateString(),
+  const formattedClients = data?.length
+    ? data?.map((client: TClient) => ({
+        ...client,
+        created_at: new Date(client.created_at).toLocaleDateString(),
+        updated_at: new Date(client.updated_at).toLocaleDateString(),
       }))
     : [];
 
   return (
     <div className="p-5 space-y-5">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold">Overview</h2>
-        <Button onClick={() => navigate("/projects/create")}>
+        <h2 className="text-xl font-bold">Clients Overview</h2>
+        <Button onClick={() => navigate("/clients/create")}>
           Create <Plus className="size-5" />
         </Button>
       </div>
       <div className="bg-white shadow rounded-lg p-6 mb-8">
         {/* Filters */}
         <div className="flex items-center justify-between">
-          <h4 className="text-xl font-semibold">Projects</h4>
+          <h4 className="text-xl font-semibold">Clients</h4>
           <div className="flex gap-2 mb-4">
             <select
               className="flex-1 min-w-[140px] px-4 py-1.5 border border-gray-200 rounded outline-none"
@@ -88,7 +86,7 @@ const Projects = () => {
 
             <input
               className="flex-1 min-w-[140px] px-4 py-1.5 border border-gray-200 rounded outline-none"
-              placeholder="Search by title…"
+              placeholder="Search by name…"
               value={searchTerm}
               onChange={(e) => handleSearchChange(e.target.value)}
             />
@@ -97,8 +95,8 @@ const Projects = () => {
 
         {/* Table */}
         <Table
-          columns={PROJECT_COLUMNS}
-          data={formattedProjects}
+          columns={CLIENT_COLUMNS} // Column configuration for the client table
+          data={formattedClients}
           isLoading={isLoading || isFetching}
         />
 
@@ -114,4 +112,4 @@ const Projects = () => {
   );
 };
 
-export default Projects;
+export default Clients;

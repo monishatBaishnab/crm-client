@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { authServices } from "../../services/auth.services";
+import { authServices } from "../../lib/axios/services/auth.services";
 import { RegisterPayload } from "../../types/auth.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { authSchemas } from "../../schemas/auth.schemas";

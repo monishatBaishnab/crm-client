@@ -1,5 +1,5 @@
 
-const Client = () => {
+const ClientTable = () => {
     return (
         <div>
             
@@ -7,4 +7,4 @@ const Client = () => {
     );
 };
 
-export default Client;
+export default ClientTable;

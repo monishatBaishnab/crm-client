@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { projectServices } from "../services/project.services";
+import { projectServices } from "../lib/axios/services/project.services";
 
 const useProjects = (filters: { name: string; value: string }[]) => {
   const { data, isLoading, isFetching } = useQuery({

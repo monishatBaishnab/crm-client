@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import api from "../lib/axios";
-import { LoginPayload, RegisterPayload } from "../types/auth.types";
+import api from "../axios";
+import { LoginPayload, RegisterPayload } from "../../../types/auth.types";
 
 const register = async (payload: RegisterPayload) => {
   try {

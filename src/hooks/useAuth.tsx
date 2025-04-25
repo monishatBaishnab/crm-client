@@ -16,7 +16,7 @@ const useAuth = () => {
     }
   }, [token]);
 
-  return { token, decoded };
+  return { token, user: decoded };
 };
 
 export default useAuth;

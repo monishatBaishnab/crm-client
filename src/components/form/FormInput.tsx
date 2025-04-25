@@ -7,6 +7,7 @@ import { TFormElementProps } from "../../types/form.types";
 export type FormInputProps = TFormElementProps & {
   type?: string;
   hidden?: boolean;
+  onChange?: (key: string) => void;
 };
 
 const FormInput = ({
@@ -18,6 +19,7 @@ const FormInput = ({
   disabled = false,
   hidden = false,
   autoFocus = false,
+  onChange,
 }: FormInputProps) => {
   const {
     control,
@@ -50,7 +52,10 @@ const FormInput = ({
           <input
             {...field}
             value={field.value ?? ""}
-            onChange={(e) => field.onChange(e.currentTarget.value)}
+            onChange={(e) => {
+              field.onChange(e.currentTarget.value);
+              onChange(e.currentTarget.value);
+            }}
             id={name}
             type={type}
             placeholder={placeholder}

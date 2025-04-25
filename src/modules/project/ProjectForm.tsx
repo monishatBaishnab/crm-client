@@ -11,7 +11,7 @@ import FormTextarea from "../../components/form/FormTextarea";
 import FormSelect from "../../components/form/FormSelect";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { create_project_schema } from "../../schemas/project.schema";
-import { projectServices } from "../../services/project.services";
+import { projectServices } from "../../lib/axios/services/project.services";
 import {
   TProject,
   TProjectFormData,

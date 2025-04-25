@@ -1,6 +1,6 @@
-import api from "../lib/axios";
-import { TProjectPayload } from "../types/project.types";
-import { Queries } from "../types/sheared.types";
+import api from "../axios";
+import { TProjectPayload } from "../../../types/project.types";
+import { Queries } from "../../../types/sheared.types";
 
 const fetchProjects = async (queries?: Queries) => {
   try {
