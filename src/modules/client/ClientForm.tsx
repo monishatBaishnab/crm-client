@@ -73,7 +73,7 @@ const ClientForm = ({ client }: ClientFormProps) => {
   };
 
   return (
-    <div className="p-5">
+    <div className="p-5 dark:bg-gray-900">
       {/* Main Container */}
       <Form
         resolver={zodResolver(create_client_schema)}
@@ -82,9 +82,9 @@ const ClientForm = ({ client }: ClientFormProps) => {
       >
         <div className="flex flex-col lg:flex-row gap-6 w-full">
           {/* Form Section */}
-          <div className="bg-white rounded-lg p-6 shadow-md flex-1">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md flex-1">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-800">
+              <h2 className="text-xl font-bold text-gray-800 dark:text-gray-300">
                 {isUpdating ? "Update" : "Create"} Client
               </h2>
               <Button

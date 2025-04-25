@@ -23,7 +23,7 @@ const Sidebar = ({ isSmall }: { isSmall: boolean }) => {
         isSmall ? "w-14" : "w-64"
       }`}
     >
-      <div className="bg-white  h-screen w-full border-r border-r-gray-100">
+      <div className="h-screen w-full border-r border-r-gray-100 bg-white dark:bg-gray-900 dark:border-r-gray-800">
         <div className="p-4">
           <Link to={"/"} className="flex items-center text-purple-500">
             <div className="shrink-0 flex items-center justify-center">
@@ -44,11 +44,14 @@ const Sidebar = ({ isSmall }: { isSmall: boolean }) => {
               key={to}
               to={to}
               className={({ isActive }) =>
-                `flex items-center gap-2 rounded-lg py-2 text-[#9197B3] transition-all duration-300 hover:bg-purple-100 hover:text-purple-500 ${
+                `flex items-center gap-2 rounded-lg py-2 transition-all duration-300 ${
+                  isSmall ? "px-[9px]" : "px-4"
+                }
+                ${
                   isActive
-                    ? "bg-purple-500 !text-white hover:bg-purple-500 hover:text-white"
-                    : ""
-                } ${isSmall ? "px-[9px]" : "px-4"}`
+                    ? "bg-purple-500 text-white hover:bg-purple-500"
+                    : "text-[#9197B3] dark:text-gray-400 hover:bg-purple-100 dark:hover:bg-purple-900 hover:text-purple-500 dark:hover:text-purple-400"
+                }`
               }
             >
               <div className="shrink-0">

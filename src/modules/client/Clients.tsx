@@ -62,18 +62,22 @@ const Clients = () => {
   return (
     <div className="p-5 space-y-5">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold">Clients Overview</h2>
+        <h2 className="text-xl font-bold text-gray-800 dark:text-white">
+          Clients Overview
+        </h2>
         <Button onClick={() => navigate("/clients/create")}>
           Create <Plus className="size-5" />
         </Button>
       </div>
-      <div className="bg-white shadow rounded-lg p-6 mb-8">
+      <div className="bg-white shadow rounded-lg p-6 mb-8 dark:bg-gray-800 dark:border-gray-700">
         {/* Filters */}
         <div className="flex items-center justify-between">
-          <h4 className="text-xl font-semibold">Clients</h4>
+          <h4 className="text-xl font-semibold text-gray-800 dark:text-white">
+            Clients
+          </h4>
           <div className="flex gap-2 mb-4">
             <select
-              className="flex-1 min-w-[140px] px-4 py-1.5 border border-gray-200 rounded outline-none"
+              className="flex-1 min-w-[140px] px-4 py-1.5 border border-gray-200 rounded outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               value={status}
               onChange={(e) => handleStatusChange(e.target.value)}
             >
@@ -85,7 +89,7 @@ const Clients = () => {
             </select>
 
             <input
-              className="flex-1 min-w-[140px] px-4 py-1.5 border border-gray-200 rounded outline-none"
+              className="flex-1 min-w-[140px] px-4 py-1.5 border border-gray-200 rounded outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               placeholder="Search by name…"
               value={searchTerm}
               onChange={(e) => handleSearchChange(e.target.value)}

@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { CircleSlash } from "lucide-react";
 import { TFormElementProps } from "../../types/form.types";
@@ -19,7 +18,6 @@ const FormInput = ({
   disabled = false,
   hidden = false,
   autoFocus = false,
-  onChange,
 }: FormInputProps) => {
   const {
     control,
@@ -27,19 +25,25 @@ const FormInput = ({
     watch,
     formState: { errors },
   } = useFormContext();
+
   const value = watch(name);
   const error = errors[name];
 
-  /* clear stale error when user types */
+  // Avoid hydration mismatch for autoFocus
+  const [shouldFocus, setShouldFocus] = useState(false);
+  useEffect(() => {
+    if (autoFocus) setShouldFocus(true);
+  }, [autoFocus]);
+
+  // Clear stale error on input
   useEffect(() => {
     if (value) clearErrors(name);
-  }, [value]);
+  }, [value, clearErrors, name]);
 
   return (
     <div className={hidden ? "hidden" : ""}>
-      {/* label */}
       {label && (
-        <label htmlFor={name} className="mb-1 block font-medium text-gray-700">
+        <label htmlFor={name} className="mb-1 block font-medium text-gray-700 dark:text-gray-300">
           {label}
           {required && <span className="text-red-500 ml-0.5">*</span>}
         </label>
@@ -52,35 +56,31 @@ const FormInput = ({
           <input
             {...field}
             value={field.value ?? ""}
-            onChange={(e) => {
-              field.onChange(e.currentTarget.value);
-              onChange(e.currentTarget.value);
-            }}
+            onChange={(e) => field.onChange(e.currentTarget.value)}
             id={name}
             type={type}
             placeholder={placeholder}
-            autoFocus={autoFocus}
+            autoFocus={shouldFocus}
             disabled={disabled}
             required={required}
             hidden={hidden}
             autoComplete="off"
+            aria-invalid={!!error}
             className={[
-              "block w-full rounded-lg border px-4 py-2 outline-none transition focus:ring-2 focus:ring-offset-1 focus:border-purple-500 focus:ring-purple-500",
-              disabled &&
-                "bg-gray-100 cursor-not-allowed focus:border-gray-200 focus:ring-0",
-              error?.message
-                ? "border-red-500 focus:border-red-500 focus:ring-red-500 "
-                : "",
+              "block w-full rounded-lg border px-4 py-2 outline-none transition focus:ring-2 focus:ring-offset-1",
+              "focus:border-purple-500 focus:ring-purple-500",
+              "dark:bg-gray-800 dark:text-white dark:border-gray-700 dark:placeholder-gray-400",
+              disabled && "bg-gray-100 dark:bg-gray-700 cursor-not-allowed focus:ring-0",
+              error?.message && "border-red-500 focus:border-red-500 focus:ring-red-500",
             ].join(" ")}
           />
         )}
       />
 
-      {/* validation message */}
       {error?.message && (
         <p className="mt-1 flex items-center gap-1 text-sm text-red-500">
           <CircleSlash className="size-4" />
-          <span className="block mb-0.5">{error.message as string}</span>
+          <span>{error.message as string}</span>
         </p>
       )}
     </div>

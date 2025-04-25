@@ -13,7 +13,7 @@ const Table = <T,>({
   columns,
   data,
   isLoading = false,
-}: TableProps<T>)=> {
+}: TableProps<T>) => {
   const [sortCfg, setSortCfg] = useState<{ key: string; order: "asc" | "desc" } | null>(
     null,
   );
@@ -25,7 +25,7 @@ const Table = <T,>({
         : { key, order: "asc" },
     );
 
-    const sorted = sortCfg ? sortItems(sortCfg, data as Record<string, unknown>[]) : data;
+  const sorted = sortCfg ? sortItems(sortCfg, data as Record<string, unknown>[]) : data;
 
   const renderSortIcon = (key: string) => {
     if (!sortCfg || sortCfg.key !== key) return <ArrowUpDown className="size-4" />;
@@ -37,8 +37,8 @@ const Table = <T,>({
       return Array.from({ length: 4 }).map((_, r) => (
         <tr key={r} className="animate-pulse">
           {columns.map((c) => (
-            <td key={c.key} className="px-4 py-2 border bg-gray-100">
-              <div className="h-5 w-full rounded bg-gray-200" />
+            <td key={c.key} className="px-4 py-2 border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-700">
+              <div className="h-5 w-full rounded bg-gray-200 dark:bg-gray-600" />
             </td>
           ))}
         </tr>
@@ -48,7 +48,7 @@ const Table = <T,>({
     if (sorted.length === 0) {
       return (
         <tr>
-          <td colSpan={columns.length} className="text-center px-4 py-2 border">
+          <td colSpan={columns.length} className="text-center px-4 py-2 border border-gray-200 dark:border-gray-700 dark:bg-gray-700">
             No data found
           </td>
         </tr>
@@ -56,9 +56,9 @@ const Table = <T,>({
     }
 
     return sorted.map((row: any, i) => (
-      <tr key={i}>
+      <tr key={i} className="hover:bg-gray-100 dark:hover:bg-gray-600">
         {columns.map((c) => (
-          <td key={c.key} className="px-4 py-2 text-sm border whitespace-nowrap">
+          <td key={c.key} className="px-4 py-2 text-sm border border-gray-200 dark:border-gray-700 whitespace-nowrap dark:bg-gray-700 dark:text-gray-300">
             {row[c.key] as React.ReactNode}
           </td>
         ))}
@@ -71,13 +71,13 @@ const Table = <T,>({
     <section>
       <div className="w-full overflow-auto">
         <table className="min-w-full table-auto">
-          <thead className="bg-gray-100 text-gray-700">
+          <thead className="bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300">
             <tr>
               {columns.map(({ label, key }) => (
                 <th
                   key={key}
                   onClick={() => toggleSort(key)}
-                  className="border border-gray-200 cursor-pointer"
+                  className="border border-gray-200 cursor-pointer dark:border-gray-700"
                 >
                   <div className="flex items-center justify-between px-4 py-2 text-sm">
                     <span className="whitespace-nowrap">{label}</span>
@@ -88,7 +88,7 @@ const Table = <T,>({
             </tr>
           </thead>
 
-          <tbody className="text-gray-600">{renderBody()}</tbody>
+          <tbody className="text-gray-600 dark:text-gray-300">{renderBody()}</tbody>
         </table>
       </div>
     </section>
