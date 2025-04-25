@@ -2,9 +2,9 @@ import { useMemo, useState } from "react";
 import useDebounce from "../../../hooks/useDebounce";
 import Table from "../../../components/ui/Table";
 import Pagination from "../../../components/ui/Pagination";
-import useProjects from "../../../hooks/useProjects";
 import { PROJECT_COLUMNS } from "../dashboard.constants";
-import { TProject } from "../../../types/project.types";
+import { TProject } from "../../project";
+import { useProjects } from "../../project/hook";
 
 const STATUS_OPTIONS = [
   { label: "All", value: "" },
