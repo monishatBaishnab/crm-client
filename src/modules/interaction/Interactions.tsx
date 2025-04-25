@@ -4,17 +4,18 @@ import Table from "../../components/ui/Table";
 import Button from "../../components/ui/Button";
 import { Edit, Plus, Trash } from "lucide-react";
 import { useNavigate } from "react-router";
-import { REMINDER_COLUMNS } from "./resources/reminder.constants";
-import { deleteReminder, TReminder } from "./resources";
+import { INTERACTION_COLUMNS } from "./resources/interaction.constants";
+import { deleteInteraction, TInteraction } from "./resources";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useReminders } from "./hook";
+import { useInteractions } from "./hook";
 
-const Reminders = () => {
+const Interactions = () => {
   const navigate = useNavigate();
   const pageSize = 5;
 
+  // Individual state slices
   const [page, setPage] = useState(1);
-  const [totalReminders, setTotalReminders] = useState(1);
+  const [totalInteractions, setTotalInteractions] = useState(1);
 
   const queryFilters = useMemo(() => {
     const filters = [
@@ -26,32 +27,31 @@ const Reminders = () => {
   }, [page]);
 
   const { data, meta, isLoading, isFetching, isSuccess } =
-    useReminders(queryFilters);
+    useInteractions(queryFilters);
 
-  const formattedReminders = data?.length
-    ? data.map((reminder: TReminder) => ({
-        ...reminder,
-        clientName: reminder.client?.name ?? "N/A",
-        projectName: reminder.project?.title ?? "N/A",
-        due_at: new Date(reminder.due_at).toLocaleDateString(),
-        is_completed: reminder.is_completed ? "Yes" : "No",
-        created_at: new Date(reminder.created_at).toLocaleDateString(),
+  const formattedInteractions = data?.length
+    ? data.map((interaction: TInteraction) => ({
+        ...interaction,
+        projectTitle: interaction.project?.title ?? "-",
+        clientName: interaction.client?.name ?? "-",
+        occurredAt: new Date(interaction.occurred_at).toLocaleDateString(),
+        created_at: new Date(interaction.created_at).toLocaleDateString(),
       }))
     : [];
 
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
-    mutationFn: (id: string) => deleteReminder(id),
+    mutationFn: (id: string) => deleteInteraction(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["reminders"] });
+      queryClient.invalidateQueries({ queryKey: ["interactions"] });
     },
   });
 
   useEffect(() => {
     if (isSuccess && meta?.total > 0) {
-      setTotalReminders(meta.total);
+      setTotalInteractions(meta.total);
     } else if (isSuccess) {
-      setTotalReminders(1);
+      setTotalInteractions(1);
     }
   }, [isSuccess, meta]);
 
@@ -59,27 +59,29 @@ const Reminders = () => {
     <div className="p-5 space-y-5">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold text-gray-800 dark:text-white">
-          Reminders Overview
+          Interactions Overview
         </h2>
-        <Button onClick={() => navigate("/reminders/create")}>
+        <Button onClick={() => navigate("/interactions/create")}>
           Create <Plus className="size-5" />
         </Button>
       </div>
       <div className="space-y-5 bg-white shadow rounded-lg p-6 mb-8 dark:bg-gray-800 dark:border-gray-700">
         {/* Filters */}
         <h4 className="text-xl font-semibold text-gray-800 dark:text-white">
-          Reminders
+          Interactions
         </h4>
 
         {/* Table */}
         <Table
-          columns={REMINDER_COLUMNS}
-          data={formattedReminders}
+          columns={INTERACTION_COLUMNS}
+          data={formattedInteractions}
           isLoading={isLoading || isFetching}
-          renderActions={(reminder: TReminder) => (
+          renderActions={(interaction: TInteraction) => (
             <div className="flex items-center justify-center gap-3">
               <button
-                onClick={() => navigate(`/reminders/update/${reminder.id}`)}
+                onClick={() =>
+                  navigate(`/interactions/update/${interaction.id}`)
+                }
                 className="text-gray-500 hover:text-blue-600 transition-colors duration-200"
                 title="Edit"
               >
@@ -87,7 +89,7 @@ const Reminders = () => {
               </button>
               <button
                 disabled={isPending}
-                onClick={() => mutate(reminder.id)}
+                onClick={() => mutate(interaction.id)}
                 className="text-gray-500 hover:text-red-600 transition-colors duration-200"
                 title="Delete"
               >
@@ -100,7 +102,7 @@ const Reminders = () => {
         {/* Pagination */}
         <Pagination
           page={page}
-          total={totalReminders}
+          total={totalInteractions}
           pageSize={pageSize}
           onPageChange={(newPage) => setPage(newPage)}
         />
@@ -109,4 +111,4 @@ const Reminders = () => {
   );
 };
 
-export default Reminders;
+export default Interactions;

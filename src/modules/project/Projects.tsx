@@ -82,7 +82,7 @@ const Projects = () => {
         {/* Filters */}
         <div className="flex items-center justify-between">
           <h4 className="text-xl font-semibold text-gray-800 dark:text-white">
-            Clients
+            Projects
           </h4>
           <div>
             <input
