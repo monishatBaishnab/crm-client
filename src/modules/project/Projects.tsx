@@ -5,7 +5,7 @@ import Table from "../../components/ui/Table";
 import Button from "../../components/ui/Button";
 import { Edit, Plus, Trash } from "lucide-react";
 import { useNavigate } from "react-router";
-import { PROJECT_COLUMNS } from "./resources/project.constants";
+import { PROJECT_COLUMNS, STATUS_OPTIONS } from "./resources/project.constants";
 import { deleteProject, TProject } from "./resources";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useProjects } from "./hook";
@@ -17,6 +17,8 @@ const Projects = () => {
   // Individual state slices
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
+
+  const [status, setStatus] = useState("");
   const [totalProjects, setTotalProjects] = useState(1);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
@@ -36,11 +38,17 @@ const Projects = () => {
     if (debouncedSearchTerm) {
       filters.push({ name: "searchTerm", value: debouncedSearchTerm });
     }
-
+    if (status) {
+      filters.push({ name: "status", value: status });
+    }
     return filters;
-  }, [page, debouncedSearchTerm]);
-
-  const { data, meta, isLoading, isFetching, isSuccess } = useProjects(queryFilters);
+  }, [page, debouncedSearchTerm, status]);
+  const handleStatusChange = (value: string) => {
+    setStatus(value);
+    setPage(1);
+  };
+  const { data, meta, isLoading, isFetching, isSuccess } =
+    useProjects(queryFilters);
 
   const formattedProjects = data?.length
     ? data?.map((project: TProject) => ({
@@ -84,7 +92,19 @@ const Projects = () => {
           <h4 className="text-xl font-semibold text-gray-800 dark:text-white">
             Projects
           </h4>
-          <div>
+          <div className="flex gap-2">
+            <select
+              className="flex-1 min-w-[140px] px-4 py-1.5 border border-gray-200 rounded outline-none"
+              value={status}
+              onChange={(e) => handleStatusChange(e.target.value)}
+            >
+              {STATUS_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+
             <input
               className="flex-1 min-w-[140px] px-4 py-1.5 border border-gray-200 rounded outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               placeholder="Search..."

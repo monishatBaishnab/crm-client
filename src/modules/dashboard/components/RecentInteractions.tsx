@@ -40,44 +40,47 @@ const InteractionCard: React.FC<{ interaction: TInteraction }> = ({
   interaction,
 }) => {
   return (
-    <div className="rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-sm transition-shadow p-5 space-y-4">
+    <div className="rounded-xl border bg-white dark:bg-gray-900 p-6 shadow-sm transition hover:shadow-md space-y-5">
+      {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+        <div className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
           {getTypeIcon(interaction.type)}
           <span className="uppercase tracking-wide">{interaction.type}</span>
         </div>
-        <div className="flex items-center text-gray-500 dark:text-gray-400 text-sm gap-1">
-          <Calendar size={16} />
+        <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+          <Calendar size={14} />
           <span>{formatDate(interaction.occurred_at)}</span>
         </div>
       </div>
 
-      <div>
-        <p className="text-gray-800 dark:text-gray-200 text-sm leading-relaxed">
-          {interaction.notes.length > 110
-            ? `${interaction.notes.slice(0, 110)}...`
-            : interaction.notes}
-        </p>
-      </div>
+      {/* Notes */}
+      <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed ">
+        {interaction.notes.length > 105
+          ? `${interaction.notes.slice(0, 105)}...`
+          : interaction.notes}
+      </p>
 
-      <div className="border-t border-gray-100 dark:border-gray-700 pt-3 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-gray-600 dark:text-gray-400">
-        <div className="flex items-center gap-2">
-          <User size={16} />
-          <div>
-            <p className="font-semibold text-gray-800 dark:text-gray-200">
+      {/* Footer */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 border-t border-gray-100 dark:border-gray-700 pt-4 text-sm">
+        {/* Client Info */}
+        <div className="flex items-center gap-3 min-w-0">
+          <User size={18} className="text-gray-400 shrink-0" />
+          <div className="flex flex-col min-w-0">
+            <span className="font-semibold text-gray-800 dark:text-gray-200 truncate">
               {interaction.client.name}
-            </p>
-            <p className="text-xs text-gray-500">
-              {interaction.client.email.length > 20
-                ? `${interaction.client.email.slice(0, 20)}...`
-                : interaction.client.email}
-            </p>
+            </span>
+            <span className="text-xs text-gray-500 dark:text-gray-400 truncate">
+              {interaction.client.email}
+            </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <FolderKanban size={16} />
-          <p>{interaction.project.title}</p>
+        {/* Project Info */}
+        <div className="flex items-center gap-3 min-w-0">
+          <FolderKanban size={18} className="text-gray-400 shrink-0" />
+          <span className="text-gray-700 dark:text-gray-300 truncate">
+            {interaction.project.title}
+          </span>
         </div>
       </div>
     </div>
